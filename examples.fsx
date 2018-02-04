@@ -1,11 +1,16 @@
-#load "FsPad.fsx"
+// #load "SocketServer.fsx"
+// #load "FsPad.fsx"
+#load "./src/FsPad/FsPadWeb.fsx"
 
-open FsPad
-open System
+System.IO.Directory.SetCurrentDirectory(__SOURCE_DIRECTORY__)
+
+open FsPadWeb
 
 ///////////////////////////////////////
 // Examples
 ///////////////////////////////////////
+
+server.SendToAll("Yooooo <b>Boy.......</b>")
 
 // Single value
 
