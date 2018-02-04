@@ -36,7 +36,7 @@ dump { firstName = "Gustavo"; lastName = "Leon"; age = 43 ; address = "Dole" }
 dump
     [
         {firstName = "Gustavo"; lastName = "Leon"  ; age = 43 ; address = "Dole" }
-        {firstName = "Steve"  ; lastName = "Goguen"; age = 20 ; address = "?" }
+        {firstName = "Steve"  ; lastName = "Goguen"; age = 40 ; address = "New Jersey" }
     ]
 
 // Nested stuff
@@ -57,7 +57,7 @@ type Tree<'a>(value:'a, getEdges:'a -> seq<'a>) =
 
 let tree1 = Tree(Some 1, fun (Some x) -> seq { for x in x..2 -> Some x })
 
-dump (tree1, 9)
+dumpLevel 6 (tree1, 9)
 
 
 // List of option
