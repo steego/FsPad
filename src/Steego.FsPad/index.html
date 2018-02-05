@@ -241,7 +241,7 @@ code.xml em { color:red; font-weight:normal; font-style:normal }
 
 </head>
 <script language="javascript" type="text/javascript">
-    var wsUri = 'ws://localhost:8080/websocket';
+    var wsUri = 'ws://localhost:$$$PORT$$$/websocket';
     var output;
 
     function init() {
@@ -258,7 +258,6 @@ code.xml em { color:red; font-weight:normal; font-style:normal }
     }
 
     function onOpen(evt) {
-        writeToScreen('CONNECTED');
         var path = window.location.pathname;
         var message = JSON.stringify({ "path": path });
         doSend(message);
@@ -280,7 +279,7 @@ code.xml em { color:red; font-weight:normal; font-style:normal }
     }
 
     function doSend(message) {
-        writeToScreen('SENT: ' + message);
+        //writeToScreen('SENT: ' + message);
         websocket.send(message);
     }
 
@@ -296,7 +295,7 @@ code.xml em { color:red; font-weight:normal; font-style:normal }
 </script>
 
 <body>
-    <div id='output'></div>
+    <div id='output'>$$$CONTENT$$$</div>
 </body>
 
 </html>

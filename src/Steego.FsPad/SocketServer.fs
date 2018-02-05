@@ -28,7 +28,7 @@ module Log =
 
 module Common = 
 
-    let indexContent = 
+    let private indexContent = 
         let assm = System.Reflection.Assembly.GetExecutingAssembly()
         let resourceName = "index.html"
         use stream = assm.GetManifestResourceStream(resourceName)
@@ -98,13 +98,15 @@ module Common =
                         loop <- false
                     | _ -> ()
             }
+
+        let getContent() = 
+            let myPort = sprintf "%i" (defaultConfig.bindings.Head.socketBinding.port)
+            indexContent.Replace("$$$PORT$$$", myPort).Replace("$$$CONTENT$$$", "Hello!")
+
         
         let mutable app = 
-
-
-
             choose [ path "/websocket" >=> handShake socketHandler
-                     GET >=> OK(indexContent)
+                     GET >=> OK(getContent())
                      NOT_FOUND "Found no handlers." ]
         
         let start() = 
@@ -125,13 +127,16 @@ module Common =
             |> Seq.map (fun c -> c.Value :> IConnection)
             |> Seq.toArray
 
-        member this.SendToAll(msg) = 
-            if this.Connections.Length < 1 then
-                let uri = defaultConfig.bindings.Head.uri "" ""
-                printfn "Uri: %s" (uri.ToString())
-                System.Diagnostics.Process.Start(uri.ToString()) |> ignore
-                ()
-            
+        member this.OpenBrowserIfDisconnected() = 
+            if this.Connections.Length < 0 then
+                this.OpenBrowser()
+
+        member this.OpenBrowser() = 
+            let uri = defaultConfig.bindings.Head.uri "" ""
+            printfn "Uri: %s" (uri.ToString())
+            System.Diagnostics.Process.Start(uri.ToString()) |> ignore
+
+        member this.SendToAll(msg) =             
             Async.RunSynchronously <| async {
                 for c in this.Connections do
                     do! c.SendAsync(msg) |> Async.AwaitTask
@@ -156,9 +161,8 @@ let private createServer (port : int) =
 ///**Exceptions**
 ///
 let getServer (port) = servers.GetOrAdd(port, fun port -> createServer (port))
+
 let startServer(port) = 
     let server = getServer(port)
     server.Start()
     server
-
-//let x = 5

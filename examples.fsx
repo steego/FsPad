@@ -1,19 +1,28 @@
-// #load "SocketServer.fsx"
-// #load "FsPad.fsx"
-#load "./src/FsPad/FsPadWeb.fsx"
+#I "src/Steego.FsPad/bin/Debug"
 
-System.IO.Directory.SetCurrentDirectory(__SOURCE_DIRECTORY__)
+#r "Suave.dll"
+#r "Steego.FsPad.dll"
 
-open FsPadWeb
+open FsPad
 
-///////////////////////////////////////
-// Examples
-///////////////////////////////////////
+//  Open a web server on port 8080
+let browser = FsPad.Web(8082)
+//  Open the browser
+browser.OpenBrowser()
 
-server.SendToAll("Yooooo <b>Boy.......</b>")
+let dump(value) = browser.Dump(value)
+let dumpLevel level value = browser.Dump(value, level)
+
+#if INTERACTIVE
+let printer(value) = 
+    dumpLevel 5 value
+    sprintf "%A" value
+
+fsi.AddPrinter(printer)
+#endif
+
 
 // Single value
-
 dump 13
 
 //  Text is Html Encoded
@@ -57,7 +66,7 @@ type Tree<'a>(value:'a, getEdges:'a -> seq<'a>) =
 
 let tree1 = Tree(Some 1, fun (Some x) -> seq { for x in x..2 -> Some x })
 
-dumpLevel 6 (tree1, 9)
+(tree1, 9) |> dumpLevel 12
 
 
 // List of option

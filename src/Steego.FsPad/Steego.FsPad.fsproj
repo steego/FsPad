@@ -71,7 +71,7 @@
     <Compile Include="SocketServer.fs" />
     <Compile Include="PrettyPrinter.fs" />
     <Compile Include="Reflection.fs" />
-    <Compile Include="ReflPrinter.fs" />
+    <Compile Include="ReflectionPrinter.fs" />
     <Compile Include="FsPadWeb.fs" />
     <EmbeddedResource Include="index.html" />
   </ItemGroup>
