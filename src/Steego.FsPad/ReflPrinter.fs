@@ -1,3 +1,5 @@
+module FsPad.ReflectionPrinter
+
 #if INTERACTIVE
 #load "PrettyPrinter.fsx"
 #load "Reflection.fsx"

@@ -1,2 +1,2 @@
-#### 0.1.0 - January 2, 2018
-* Initial release using ProjectScaffold
+#### 0.0.1-beta
+* Prototyped a object dumping library for F# interactive

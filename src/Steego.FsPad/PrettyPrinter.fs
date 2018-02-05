@@ -1,4 +1,4 @@
-#load "SocketServer.fsx"
+module FsPad.PrettyPrinter
 
 type PrettyPrint =
     | List  of list<PrettyPrint>
@@ -75,14 +75,3 @@ let render x =
             else "<td>" + body + "</td>"
 
     render false false x
-
-let printThis(p:PrettyPrint) = 
-    let server1 = SocketServer.startServer(8080)
-    server1.SendToAll(render p)
-    sprintf "%A" p
-
-
-
-#if INTERACTIVE
-fsi.AddPrinter(printThis)
-#endif

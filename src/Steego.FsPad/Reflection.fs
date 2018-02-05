@@ -1,4 +1,4 @@
-
+module FsPad.Reflection
 
 module TypeInfo = begin
     open System

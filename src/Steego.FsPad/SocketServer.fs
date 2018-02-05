@@ -1,8 +1,4 @@
-#I "../../packages/Suave/lib/net40/"
-// #I "../../packages/"
-// #I "../../packages/Suave/lib/netstandard1.6/" // ignore-cat
-
-#r "Suave.dll"
+module FsPad.SocketServer
 
 open System.Threading.Tasks
 open Suave
@@ -32,14 +28,12 @@ module Log =
 
 module Common = 
 
-#if INTERACTIVE
-    let setFolder() = 
-        printfn "Changing diriectory from %s" (System.IO.Directory.GetCurrentDirectory())
-        printfn "Changing to: %s" (__SOURCE_DIRECTORY__)
-        System.IO.Directory.SetCurrentDirectory(__SOURCE_DIRECTORY__)
-#else
-    let setFolder() = ()
-#endif
+    let indexContent = 
+        let assm = System.Reflection.Assembly.GetExecutingAssembly()
+        let resourceName = "index.html"
+        use stream = assm.GetManifestResourceStream(resourceName)
+        use reader = new StreamReader(stream)
+        reader.ReadToEnd()
 
     /// Sends text to a websocket
     let private sendText (webSocket : WebSocket) (response : string) = 
@@ -106,13 +100,15 @@ module Common =
             }
         
         let mutable app = 
+
+
+
             choose [ path "/websocket" >=> handShake socketHandler
-                     GET >=> Files.file "index.html"
+                     GET >=> OK(indexContent)
                      NOT_FOUND "Found no handlers." ]
         
         let start() = 
             if not started then
-                setFolder()
                 Log.debug("Started Webserver!")
                 lock connections (fun () -> started <- true)
                 let config = { defaultConfig with logger = Targets.create Verbose [||] }
@@ -165,6 +161,4 @@ let startServer(port) =
     server.Start()
     server
 
-#if INTERACTIVE
-System.IO.Directory.SetCurrentDirectory(__SOURCE_DIRECTORY__)
-#endif
+//let x = 5
