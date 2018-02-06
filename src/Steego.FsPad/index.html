@@ -259,8 +259,8 @@ code.xml em { color:red; font-weight:normal; font-style:normal }
 
     function onOpen(evt) {
         var path = window.location.pathname;
-        var message = JSON.stringify({ "path": path });
-        doSend(message);
+        // var message = JSON.stringify({ "path": path });
+        doSend("START: " + path);
     }
 
     function onClose(evt) {

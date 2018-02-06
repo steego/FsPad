@@ -1,4 +1,6 @@
-#I "src/Steego.FsPad/bin/Debug"
+//  #quit
+
+#I "src/Steego.FsPad/bin/Release/"
 
 #r "Suave.dll"
 #r "Steego.FsPad.dll"
@@ -6,7 +8,7 @@
 open FsPad
 
 //  Open a web server on port 8080
-let browser = FsPad.Web(8082)
+let browser = FsPad.Web(8080)
 //  Open the browser
 browser.OpenBrowser()
 
@@ -78,3 +80,15 @@ let tree1 = Tree(Some 1, fun (Some x) -> seq { for x in x..2 -> Some x })
 // List of record, some fields are options
 type Tab<'a,'b,'c> = { a : 'a ; b : 'b ; c : 'c }
 [1..30] |> List.map (fun x -> {a = (if x % 2 = 0 then Some x else None); b = x; c = if x % 3 = 0 then Some x else None} ) |> dump
+
+//  Loop over
+Async.RunSynchronously <| async {
+    for x in 1..100 do
+        do! Async.Sleep(100)
+        dump (x, x * x)
+
+    }
+
+browser.SetContent("test/one", (2, "Hello World.........."))
+
+browser.SetContent("", (1, "Hello Worldssssss..."))

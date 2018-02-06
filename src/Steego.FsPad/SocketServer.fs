@@ -51,6 +51,7 @@ module Common =
     
     type IConnection = 
         abstract Id : string
+        abstract Path : string list
         abstract OnReceive : IObservable<Message>
         abstract SendAsync : string -> Task
     
@@ -58,19 +59,28 @@ module Common =
         { Connection : IConnection
           Message : string }
     
+    let split(s:string) = s.Split('/') |> List.ofArray |> List.filter(fun s -> not(String.IsNullOrWhiteSpace(s)))
+
     type private SuaveConnection(context : HttpContext, ws : WebSocket) = 
         let id = Guid.NewGuid().ToString()
         let onReceive = new Event<Message>()
+        //let path = context.request.path |> split
+        let mutable path = []
         member this.Id = id
+        member this.Path = path
+        member this.SetPath(newPath) = 
+            path <- (newPath |> split)
+            printfn "Set path: %A" path
         member this.TellReceived(msg) = onReceive.Trigger(msg)
         member this.OnReceive = onReceive.Publish :> IObservable<_>
-        member this.SendAsync(msg : string) = async { let! _ = msg |> sendText ws
-                                                      () } 
+        member this.SendAsync(msg : string) = 
+            async { let! _ = msg |> sendText ws 
+                    () } 
         interface IConnection with
             member this.Id = id
+            member this.Path = path
             member this.OnReceive = this.OnReceive
-            member this.SendAsync(msg) = 
-                this.SendAsync(msg) |> Async.StartAsTask :> Task
+            member this.SendAsync(msg) = this.SendAsync(msg) |> Async.StartAsTask :> Task
     
     type Server(defaultConfig : SuaveConfig) = 
         let mutable started = false
@@ -90,7 +100,12 @@ module Common =
                 while loop do
                     let! msg = ws.read()
                     match msg with
-                    | Message(str) -> 
+                    | Message(str:string) -> 
+                        if str.StartsWith("START:") then
+                            let path = str.Substring(6)
+                            conn.SetPath(path)
+                            ()
+
                         onReceive.Trigger({ Connection = getConn (id)
                                             Message = str })
                     | (Close, _, _) -> 
@@ -99,14 +114,15 @@ module Common =
                     | _ -> ()
             }
 
-        let getContent() = 
-            let myPort = sprintf "%i" (defaultConfig.bindings.Head.socketBinding.port)
-            indexContent.Replace("$$$PORT$$$", myPort).Replace("$$$CONTENT$$$", "Hello!")
+        let mutable fetchContent = fun (ctx:Suave.Http.HttpContext) -> "Hello!"
 
+        let getContent(ctx) = 
+            let myPort = sprintf "%i" (defaultConfig.bindings.Head.socketBinding.port)
+            indexContent.Replace("$$$PORT$$$", myPort).Replace("$$$CONTENT$$$", fetchContent(ctx))
         
         let mutable app = 
             choose [ path "/websocket" >=> handShake socketHandler
-                     GET >=> OK(getContent())
+                     GET >=> context(fun ctx -> OK(getContent(ctx)))
                      NOT_FOUND "Found no handlers." ]
         
         let start() = 
@@ -120,6 +136,8 @@ module Common =
         
         member this.Start() = start()
         
+        member this.SetContentFetch(f) = fetchContent <- f
+
         member this.OnReceived = onReceive.Publish
         
         member this.Connections = 
