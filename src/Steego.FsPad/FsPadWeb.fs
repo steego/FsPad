@@ -6,11 +6,10 @@ open ReflectionPrinter
 
 type Web(port:int) = 
     let server = startServer(port)
-
     let render level value = value |> print level |> PrettyPrinter.render
-
+    
+    //  TODO:  Unprotected mutable variables.  BOO!!!! - We'll fix this soon.
     let mutable myLookup : Map<string list, obj> = Map.empty
-
     let split(s:string) = s.Split('/') |> List.ofArray |> List.filter(fun s -> not(String.IsNullOrWhiteSpace(s)))
 
     let myFetch(ctx:Suave.Http.HttpContext) =

@@ -1,3 +1,7 @@
+#### 0.0.4-beta
+* Fixed boolean encoding
+* Added support to print raw html with FsPad.UnprotectedHtml type
+
 #### 0.0.3-beta
 * FsPad.Web supports pushing to alternative URLs
 

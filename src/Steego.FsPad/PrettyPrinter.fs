@@ -5,6 +5,7 @@ type PrettyPrint =
     | Optn  of option<PrettyPrint>
     | Table of list<Field>
     | Value of string * string
+    | RawHtml of string
     | MaxRecurse
 and Field = {name : string; value : PrettyPrint}
 
@@ -13,6 +14,7 @@ let htmlEncode s = System.Net.WebUtility.HtmlEncode(s)
 let render x =
     let rec render forceTabular td x =
         match x with        
+        | RawHtml(html) -> html
         | MaxRecurse -> "..."
         | Value (ty, vl) -> 
             if not td then htmlEncode vl
