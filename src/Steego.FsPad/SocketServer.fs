@@ -88,7 +88,7 @@ module Common =
         let onReceive = new Event<Message>()
         
         let getConn (id : string) = 
-            let (exists, conn) = connections.TryGetValue(id)
+            let (_, conn) = connections.TryGetValue(id)
             conn :> IConnection
         
         let socketHandler (ws : WebSocket) (context : HttpContext) = 
@@ -114,7 +114,7 @@ module Common =
                     | _ -> ()
             }
 
-        let mutable fetchContent = fun (ctx:Suave.Http.HttpContext) -> "Hello!"
+        let mutable fetchContent = fun (_:Suave.Http.HttpContext) -> "Hello!"
 
         let getContent(ctx) = 
             let myPort = sprintf "%i" (defaultConfig.bindings.Head.socketBinding.port)

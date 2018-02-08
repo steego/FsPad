@@ -1,6 +1,6 @@
 //  #quit
 
-#I "src/Steego.FsPad/bin/Release/"
+#I "src/Steego.FsPad/bin/Debug/"
 
 #r "Suave.dll"
 #r "Steego.FsPad.dll"
@@ -89,6 +89,6 @@ Async.RunSynchronously <| async {
 
     }
 
-browser.SetContent("test/one", (2, "Hello World.........."))
+browser.DumpToPath((2, "Hello World.........."), "test/one")
 
-browser.SetContent("", (1, "Hello Worldssssss..."))
+browser.DumpToPath((1, "Hello Worldssssss..."), "")
