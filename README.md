@@ -29,3 +29,28 @@ let autoPrint(value:'a) =
 //  Comment this out if you don't want values automatically printing
 fsi.AddPrinter (autoPrint)
 ```
+
+
+##  Example Script with using LINQPad's Object Dumper 
+```fsharp
+#I "./bin/Debug"
+
+#r "Suave.dll"
+#r "Steego.FsPad.dll"
+#r @"C:\Program Files (x86)\LINQPad5\LINQPad.exe"
+
+open FsPad
+
+let browser = FsPad.Web(8080)
+
+let dump(value:'a) = browser.Dump(value, 5)
+
+let autoPrint(value:'a) = 
+    //  Use LINQPad to convert the value into HTML
+    let html = LINQPad.Util.ToHtmlString(3, value :> obj)
+    //  Then send it to the browser
+    dump(UnprotectedHtml(html)) |> ignore
+    sprintf "%A" value
+
+fsi.AddPrinter (autoPrint)
+```
