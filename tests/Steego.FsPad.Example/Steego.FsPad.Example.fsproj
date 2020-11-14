@@ -13,4 +13,8 @@
     <ProjectReference Include="..\..\src\Steego.FsPad\Steego.FsPad.fsproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
 </Project>
