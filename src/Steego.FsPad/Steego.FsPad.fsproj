@@ -4,7 +4,20 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageId>Steego.FsPad</PackageId>
+    <Version>0.0.5</Version>
+    <Authors>Gustavo Leon, Steve Goguen</Authors>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <!-- <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl> -->
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <!-- <BuildOutputTargetFolder>nupkgs</BuildOutputTargetFolder> -->
+  </PropertyGroup>
+
   <ItemGroup>
+    <None Include="LICENSE.txt" Pack="true" PackagePath="" />
+    <!-- <Content Include="LICENSE.txt" /> -->
+    <Content Include="AssemblyInfo.fs" />
     <Content Include="App.config" />
     <Compile Include="SocketServer.fs" />
     <Compile Include="PrettyPrinter.fs" />

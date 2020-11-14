@@ -27,13 +27,19 @@ module Log =
     let debug(msg) = printfn "[%s DBG] %s" (getDate()) msg
 
 module Common = 
+    exception AssemblyContentLoadException of string * Exception
+
 
     let private indexContent = 
-        let assm = System.Reflection.Assembly.GetExecutingAssembly()
-        let resourceName = "index.html"
-        use stream = assm.GetManifestResourceStream(resourceName)
-        use reader = new StreamReader(stream)
-        reader.ReadToEnd()
+        let resourceName = "Steego.FsPad.index.html"
+        try
+            let assm = System.Reflection.Assembly.GetExecutingAssembly()
+            use stream = assm.GetManifestResourceStream(resourceName)
+            use reader = new StreamReader(stream)
+            reader.ReadToEnd()
+        with ex ->
+            raise(AssemblyContentLoadException(resourceName, ex))
+
 
     /// Sends text to a websocket
     let private sendText (webSocket : WebSocket) (response : string) = 
@@ -178,7 +184,8 @@ let private createServer (port : int) =
 ///
 ///**Exceptions**
 ///
-let getServer (port) = servers.GetOrAdd(port, fun port -> createServer (port))
+let getServer (port) = 
+    servers.GetOrAdd(port, fun port -> createServer (port))
 
 let startServer(port) = 
     let server = getServer(port)
