@@ -16,9 +16,7 @@
 
   <ItemGroup>
     <None Include="LICENSE.txt" Pack="true" PackagePath="" />
-    <!-- <Content Include="LICENSE.txt" /> -->
-    <Content Include="AssemblyInfo.fs" />
-    <Content Include="App.config" />
+    <Compile Include="AssemblyInfo.fs" />
     <Compile Include="SocketServer.fs" />
     <Compile Include="PrettyPrinter.fs" />
     <Compile Include="Reflection.fs" />
