@@ -44,7 +44,7 @@ module Common =
          // the `send` function sends a message back to the client
          webSocket.send Text byteResponse true)
     
-    let private (|Message|_|) msg = 
+    let private (|Message|_|) (msg: (Opcode * byte array * bool)) = 
         match msg with
         | (Text, data, true) -> Some(System.Text.Encoding.UTF8.GetString(data))
         | _ -> None
@@ -59,7 +59,7 @@ module Common =
         { Connection : IConnection
           Message : string }
     
-    let split(s:string) = s.Split('/') |> List.ofArray |> List.filter(fun s -> not(String.IsNullOrWhiteSpace(s)))
+    let split(s:string) = s.Split('/') |> List.ofArray |> List.filter(String.IsNullOrWhiteSpace >> not)
 
     type private SuaveConnection(context : HttpContext, ws : WebSocket) = 
         let id = Guid.NewGuid().ToString()
@@ -122,7 +122,7 @@ module Common =
         
         let mutable app = 
             choose [ path "/websocket" >=> handShake socketHandler
-                     GET >=> context(fun ctx -> OK(getContent(ctx)))
+                     GET >=> context(getContent >> OK)
                      NOT_FOUND "Found no handlers." ]
         
         let start() = 
