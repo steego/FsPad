@@ -10,7 +10,7 @@ open FsPad
 let browser = FsPad.Web(8080)
 let dump(value) = browser.Dump(value)
 
-let toJson object = Newtonsoft.Json.JsonConvert.SerializeObject(object)
+// let toJson object = Newtonsoft.Json.JsonConvert.SerializeObject(object)
 
 type TaggedType(tag: string) = 
     member this.Tag = tag
@@ -21,14 +21,25 @@ type Person(name: string, age:int) =
     member this.Age = age
 
 let doMain = async {
-    for x in 1..100 do
+    for x in 1..10000 do
         let message = sprintf "Hello %i" x
         let object = {| Message = message; X = x |}
         let bob = Person("Bob", 30)
-        dump({| Value = object; Json = toJson object; Bob = toJson bob |})
-        do! Async.Sleep(300)
+        dump(
+            {| 
+                StringValue = "one"
+                Num = 1
+                Value = object
+                Json = object
+                Bob = bob 
+                People = [
+                    {| Name = "Jim"; Age = 20 |}
+                    {| Name = "Larry"; Age = 20 |}
+                ]
+            |}
+        )
+        do! Async.Sleep(1000)
 }
-
 
 [<EntryPoint>]
 let main argv =

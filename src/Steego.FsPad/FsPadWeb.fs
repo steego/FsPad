@@ -3,10 +3,12 @@ namespace FsPad
 open System
 open SocketServer
 open ReflectionPrinter
+open Newtonsoft.Json
 
 type Web(port:int) = 
     let server = startServer(port)
-    let render level value = value |> print level |> PrettyPrinter.render
+    // let render level value = value |> print level |> PrettyPrinter.render
+    let render level value = JsonConvert.SerializeObject(value, Formatting.Indented)
     
     //  TODO:  Unprotected mutable variables.  BOO!!!! - We'll fix this soon.
     let mutable myLookup : Map<string list, obj> = Map.empty
@@ -21,8 +23,8 @@ type Web(port:int) =
     do server.SetContentFetch(myFetch)
 
     ///  Displays the content of an object with a maximum depth
-    let dumpLevel (level:int) (value:'a) = 
-        value |> print level |> PrettyPrinter.render |> server.SendToAll
+    let dumpLevel (level:int) (value:'a) = render level value |> server.SendToAll
+        // value |> print level |> PrettyPrinter.render |> server.SendToAll
 
     let dump x = dumpLevel 3 x
 
