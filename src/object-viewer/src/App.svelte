@@ -1,5 +1,7 @@
 <script lang="ts">
 	import Viewer from "./Viewer.svelte";
+	import 'bulma/css/bulma.css'
+	import { Button } from 'svelma'
 
 	export let object: unknown = "Not connected...";
 
@@ -70,5 +72,14 @@
 </script>
 
 <main>
-	<Viewer value={object} />
+	<section class="section">
+
+		<div class="container">
+	
+			<h1 class="title">Dump</h1>
+			<Viewer value={object} />
+		</div>
+	</section>
+
+	<!-- <Button>I am a Button</Button> -->
 </main>

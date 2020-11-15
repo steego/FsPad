@@ -1,5 +1,6 @@
 <script lang="ts">
     //   import { getRenderType } from "meta";
+    import 'bulma/css/bulma.css'
   
     export let value: unknown;
   
@@ -78,7 +79,7 @@
   {#if info.type === 'simple-value'}
     <div>{info.value}</div>
   {:else if info.type === 'object'}
-    <table class="grid">
+    <table class="table is-bordered is-narrow">
       {#each getKeyValues(info.value) as { key, value }, i}
         <tr>
           <th>{key}</th>
@@ -89,7 +90,7 @@
       {/each}
     </table>
   {:else if info.type === 'array'}
-    <table class="grid">
+    <table class="table is-bordered is-narrow">
       {#if info.keys}
         <thead>
           <tr>
