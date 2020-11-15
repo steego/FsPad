@@ -49,9 +49,6 @@
 
 		function onError(evt) {
 			object = evt;
-			// writeToScreen(
-			// 	'<span style=""color: red;"">ERROR:</span> ' + evt.data
-			// );
 		}
 
 		function doSend(message) {
@@ -76,10 +73,8 @@
 
 		<div class="container">
 	
-			<h1 class="title">Dump</h1>
+			<!-- <h1 class="title">Dump</h1> -->
 			<Viewer value={object} />
 		</div>
 	</section>
-
-	<!-- <Button>I am a Button</Button> -->
 </main>

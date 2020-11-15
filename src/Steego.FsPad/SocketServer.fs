@@ -29,17 +29,18 @@ module Log =
 module Common = 
     exception AssemblyContentLoadException of string * Exception
 
-
-    let private indexContent = 
-        let resourceName = "Steego.FsPad.index.html"
+    let getResourceContent(filename: string) =
+        let resourceName = sprintf "Steego.FsPad.public.%s" (filename.Replace("/", "."))
         try
             let assm = System.Reflection.Assembly.GetExecutingAssembly()
             use stream = assm.GetManifestResourceStream(resourceName)
             use reader = new StreamReader(stream)
             reader.ReadToEnd()
         with ex ->
+            eprintfn "Failed to load resource %s" resourceName
             raise(AssemblyContentLoadException(resourceName, ex))
 
+    // let private indexContent = getResourceContent "index.html"
 
     /// Sends text to a websocket
     let private sendText (webSocket : WebSocket) (response : string) = 
@@ -122,13 +123,22 @@ module Common =
 
         let mutable fetchContent = fun (_:Suave.Http.HttpContext) -> "Hello!"
 
-        let getContent(ctx) = 
-            let myPort = sprintf "%i" (defaultConfig.bindings.Head.socketBinding.port)
-            indexContent.Replace("$$$PORT$$$", myPort).Replace("$$$CONTENT$$$", fetchContent(ctx))
+        let getContent (filename:string) =
+            let indexContent = getResourceContent filename
+            fun (ctx) -> 
+                let myPort = sprintf "%i" (defaultConfig.bindings.Head.socketBinding.port)
+                indexContent.Replace("$$$PORT$$$", myPort).Replace("$$$CONTENT$$$", fetchContent(ctx))
         
         let mutable app = 
             choose [ path "/websocket" >=> handShake socketHandler
-                     GET >=> context(getContent >> OK)
+                    //  GET >=> OK(getResourceContent "index.html")
+                     GET >=> choose
+                        [ 
+                            path "/" >=> OK(getResourceContent "index.html")
+                            path "global.css" >=> OK(getResourceContent "global.css")
+                            path "/build/bundle.css" >=> OK(getResourceContent "build/bundle.css") 
+                            path "/build/bundle.js" >=> OK(getResourceContent "build/bundle.js") 
+                        ]
                      NOT_FOUND "Found no handlers." ]
         
         let start() = 
