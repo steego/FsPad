@@ -10,13 +10,10 @@ This is prototype a fork of Gustavo Leon's FsPad project.
 
 ## Example Script - SteegoFsPad.fsx
 ```fsharp
-#I "./bin/Debug"  //  Set this to the location where the package was installed
-
-#r "Suave.dll"    
-#r "Steego.FsPad.dll"
+#r "nuget: Steego.FsPad"
 
 //  This is the default port for the web server
-let browser = FsPad.Web(8080)
+let browser = FsPad.Web(3000)
 
 //  Provides a function to send values directly to the browser
 let dump(value:'a) = browser.Dump(value, 5)
